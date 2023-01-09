@@ -10,7 +10,7 @@ def getJobs(gpus, ppg, paramLists, jobId=0, platform='auto'):
     '''
     jobs = gpus * ppg
     if platform == 'auto':
-        if 'SLURM_JOBID' in os.environ:
+        if 'SLURM_JOB_ID' in os.environ:
             platform = 'slurm'
         else:
             platform = 'online'
