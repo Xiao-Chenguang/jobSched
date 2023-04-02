@@ -1,7 +1,7 @@
 import os
 from itertools import product
 
-def getJobs(gpus, ppg, paramLists, jobId=0, platform='auto'):
+def getJobs(gpus, ppg, paramLists=None, jobpar=None, jobId=0, platform='auto'):
     '''
     platform: 'slurm' or 'online'
     gpus: number of gpus
@@ -10,7 +10,7 @@ def getJobs(gpus, ppg, paramLists, jobId=0, platform='auto'):
     '''
     jobs = gpus * ppg
     if platform == 'auto':
-        if 'SLURM_JOB_ID' in os.environ:
+        if 'SLURM_ARRAY_TASK_ID' in os.environ:
             platform = 'slurm'
         else:
             platform = 'online'
@@ -26,9 +26,14 @@ def getJobs(gpus, ppg, paramLists, jobId=0, platform='auto'):
     if jobId >= jobs:
         return ValueError('jobId must be less than {}'.format(jobs))
     jobList = []
-    for i, x in enumerate(product(*paramLists)):
-        if i % jobs == jobId:
-            jobList.append(x)
+    if jobpar is not None:
+        for i, x in enumerate(jobpar):
+            if i % jobs == jobId:
+                jobList.append(x)
+    elif paramLists is not None:
+        for i, x in enumerate(product(*paramLists)):
+            if i % jobs == jobId:
+                jobList.append(x)
 
     print(f'Running on [{platform}] with jobId: {jobId} with following parameters:\n{jobList}')
     return jobList
