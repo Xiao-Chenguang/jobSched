@@ -1,7 +1,8 @@
 import os
 from itertools import product
+from typing import List
 
-def getJobs(gpus, ppg, paramLists=None, jobpar=None, jobId=0, platform='auto'):
+def getJobs(gpus, ppg, paramLists=None, jobpar=None, jobId=0, platform='auto') -> List[List]:
     '''
     platform: 'slurm' or 'online'
     gpus: number of gpus
