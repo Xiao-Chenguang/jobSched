@@ -2,7 +2,7 @@ import os
 from itertools import product
 from typing import List
 
-def getJobs(gpus, ppg, paramLists=None, jobpar=None, jobId=0, platform='auto') -> List[List]:
+def getJobs(gpus, ppg, paramLists=None, jobpar=None, jobId=None, platform='auto') -> List[List]:
     '''
     platform: 'slurm' or 'online'
     gpus: number of gpus
@@ -24,6 +24,8 @@ def getJobs(gpus, ppg, paramLists=None, jobpar=None, jobId=0, platform='auto') -
         print(f'taskId: {taskId}, localId: {localId}, jobId: {jobId}')
     elif platform != 'online':
         raise ValueError('Unknown platform: {}'.format(platform))
+    if jobId is None:
+        raise ValueError('jobId is required for platform: {}'.format(platform))
     if jobId >= jobs:
         return []
     jobList = []
