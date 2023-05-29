@@ -25,7 +25,7 @@ def getJobs(gpus, ppg, paramLists=None, jobpar=None, jobId=0, platform='auto') -
     elif platform != 'online':
         raise ValueError('Unknown platform: {}'.format(platform))
     if jobId >= jobs:
-        return ValueError('jobId must be less than {}'.format(jobs))
+        return []
     jobList = []
     if jobpar is not None:
         for i, x in enumerate(jobpar):
