@@ -2,14 +2,13 @@ import os
 from itertools import product
 from typing import List
 
-def getJobs(gpus, ppg, paramLists=None, jobpar=None, jobId=None, platform='auto') -> List[List]:
+def getJobs(paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform='auto') -> List[List]:
     '''
     platform: 'slurm' or 'online'
     gpus: number of gpus
     ppg: number of processes per gpu
     paramLists: list of lists of parameters
     '''
-    jobs = gpus * ppg
     if platform == 'auto':
         if 'SLURM_ARRAY_TASK_ID' in os.environ:
             platform = 'slurm'
@@ -18,14 +17,20 @@ def getJobs(gpus, ppg, paramLists=None, jobpar=None, jobId=None, platform='auto'
     print('Platform: {}'.format(platform))
 
     if platform == 'slurm':
+        job_id = int(os.environ['SLURM_ARRAY_JOB_ID'])
         taskId = int(os.environ['SLURM_ARRAY_TASK_ID'])
+        gpus = int(os.environ['SLURM_ARRAY_TASK_COUNT'])
+        ppg = int(os.environ['SLURM_NTASKS'])
+        # min_task_id = int(os.environ['SLURM_ARRAY_TASK_MIN'])
+        # max_task_id = int(os.environ['SLURM_ARRAY_TASK_MAX'])
         localId = int(os.environ['SLURM_LOCALID'])
         jobId = taskId * ppg + localId
-        print(f'taskId: {taskId}, localId: {localId}, jobId: {jobId}')
+        print(f'schedule for job: {job_id} array: {taskId+1}/{gpus} process {localId+1}/{ppg}')
     elif platform != 'online':
         raise ValueError('Unknown platform: {}'.format(platform))
     if jobId is None:
         raise ValueError('jobId is required for platform: {}'.format(platform))
+    jobs = gpus * ppg
     if jobId >= jobs:
         return []
     jobList = []
