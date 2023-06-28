@@ -19,7 +19,8 @@ def getJobs(paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform='a
     if platform == 'slurm':
         job_id = int(os.environ['SLURM_ARRAY_JOB_ID'])
         taskId = int(os.environ['SLURM_ARRAY_TASK_ID'])
-        gpus = int(os.environ['SLURM_ARRAY_TASK_COUNT'])
+        # gpus = int(os.environ['SLURM_ARRAY_TASK_COUNT'])
+        gpus = int(os.environ['SLURM_ARRAY_TASK_MAX']) + 1
         ppg = int(os.environ['SLURM_NTASKS'])
         # min_task_id = int(os.environ['SLURM_ARRAY_TASK_MIN'])
         # max_task_id = int(os.environ['SLURM_ARRAY_TASK_MAX'])
