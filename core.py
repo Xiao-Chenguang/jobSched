@@ -32,8 +32,8 @@ def getJobs(paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform='a
     if jobId is None:
         raise ValueError('jobId is required for platform: {}'.format(platform))
     jobs = gpus * ppg
-    if jobId >= jobs:
-        return []
+    # if jobId >= jobs:
+    #     return []
     jobList = []
     if jobpar is not None:
         for i, x in enumerate(jobpar):
