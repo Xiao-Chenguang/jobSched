@@ -4,7 +4,7 @@ from typing import List
 
 def getJobs(paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform='auto') -> List[List]:
     '''
-    platform: 'slurm' or 'online'
+    platform: 'slurm' or 'shell'
     gpus: number of gpus
     ppg: number of processes per gpu
     paramLists: list of lists of parameters
@@ -13,7 +13,7 @@ def getJobs(paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform='a
         if 'SLURM_ARRAY_TASK_ID' in os.environ:
             platform = 'slurm'
         else:
-            platform = 'online'
+            platform = 'shell'
     print('Platform: {}'.format(platform))
 
     if platform == 'slurm':
@@ -27,7 +27,7 @@ def getJobs(paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform='a
         localId = int(os.environ['SLURM_LOCALID'])
         jobId = taskId * ppg + localId
         print(f'schedule for job: {job_id} array: {taskId+1}/{gpus} process {localId+1}/{ppg}')
-    elif platform != 'online':
+    elif platform != 'shell':
         raise ValueError('Unknown platform: {}'.format(platform))
     if jobId is None:
         raise ValueError('jobId is required for platform: {}'.format(platform))
