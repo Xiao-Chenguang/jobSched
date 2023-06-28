@@ -44,7 +44,7 @@ def getJobs(paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform='a
             if i % jobs == jobId:
                 jobList.append(x)
 
-    print(f'Running on [{platform}] with jobId: {jobId} with following parameters:')
+    print(f'Running job {jobId} on [{platform}] with following {len(jobList)} steps:')
     for i, params in enumerate(jobList):
-        print(i, params)
+        print('step', i, params)
     return jobList
