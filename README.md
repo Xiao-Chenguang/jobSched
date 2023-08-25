@@ -31,7 +31,7 @@ for param1, param2 in product([1,2,3], [4,5,6]):
     run_job(param1, param2)
 ```
 
-### Step 2 parallization
+### Step 2: parallization
 Use this scheduler to run all the jobs in parallel.
 ```python
 def run_job(param1, param2):
