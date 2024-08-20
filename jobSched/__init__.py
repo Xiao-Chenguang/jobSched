@@ -18,9 +18,9 @@ def getJobs(
         list of jobs allocated to the process
 
     Example:
-        # run 4 parallel jobs: 2 tasks with 2 processes each
-        jobs_1 = getJobs(params=[[1, 2], [3, 4]], num_task=2, num_proc=2, pid=0, platform="shell")
-        assert jobs_1 == [1, 3]
+        >>> # run 4 parallel jobs: 2 tasks with 2 processes each
+        >>> jobs_1 = getJobs(params=[[1, 2], [3, 4]], num_task=2, num_proc=2, pid=0, platform="shell")
+        >>> assert jobs_1 == [1, 3]
     """
     if platform == "auto":
         if "SLURM_ARRAY_TASK_ID" in os.environ:
