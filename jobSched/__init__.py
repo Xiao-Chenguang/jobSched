@@ -2,35 +2,40 @@ import os
 from itertools import product
 from typing import List
 
-def getJobs(paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform='auto') -> List[List]:
-    '''
-    platform: 'slurm' or 'shell'
+
+def getJobs(
+    paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform="auto"
+) -> List[List]:
+    """
+    platform: 'slurm' or 'shell', if not specified in sbatch, ensure set --array in sbatch
     gpus: number of gpus
     ppg: number of processes per gpu
     paramLists: list of lists of parameters
-    '''
-    if platform == 'auto':
-        if 'SLURM_ARRAY_TASK_ID' in os.environ:
-            platform = 'slurm'
+    """
+    if platform == "auto":
+        if "SLURM_ARRAY_TASK_ID" in os.environ:
+            platform = "slurm"
         else:
-            platform = 'shell'
-    print('Platform: {}'.format(platform))
+            platform = "shell"
+    print("Platform: {}".format(platform))
 
-    if platform == 'slurm':
-        job_id = int(os.environ['SLURM_ARRAY_JOB_ID'])
-        taskId = int(os.environ['SLURM_ARRAY_TASK_ID'])
+    if platform == "slurm":
+        job_id = int(os.environ["SLURM_ARRAY_JOB_ID"])
+        taskId = int(os.environ["SLURM_ARRAY_TASK_ID"])
         # gpus = int(os.environ['SLURM_ARRAY_TASK_COUNT'])
-        gpus = int(os.environ['SLURM_ARRAY_TASK_MAX']) + 1
-        ppg = int(os.environ['SLURM_NTASKS'])
+        gpus = int(os.environ["SLURM_ARRAY_TASK_MAX"]) + 1
+        ppg = int(os.environ["SLURM_NTASKS"])  # use srun
         # min_task_id = int(os.environ['SLURM_ARRAY_TASK_MIN'])
         # max_task_id = int(os.environ['SLURM_ARRAY_TASK_MAX'])
-        localId = int(os.environ['SLURM_LOCALID'])
+        localId = int(os.environ['SLURM_LOCALID']) # use srun
         jobId = taskId * ppg + localId
-        print(f'schedule for job: {job_id} array: {taskId+1}/{gpus} process {localId+1}/{ppg}')
-    elif platform != 'shell':
-        raise ValueError('Unknown platform: {}'.format(platform))
+        print(
+            f"schedule for job: {job_id} array: {taskId+1}/{gpus} process {localId+1}/{ppg}"
+        )
+    elif platform != "shell":
+        raise ValueError("Unknown platform: {}".format(platform))
     if jobId is None:
-        raise ValueError('jobId is required for platform: {}'.format(platform))
+        raise ValueError("jobId is required for platform: {}".format(platform))
     jobs = gpus * ppg
     # if jobId >= jobs:
     #     return []
@@ -44,7 +49,10 @@ def getJobs(paramLists=None, gpus=1, ppg=1, jobpar=None, jobId=None, platform='a
             if i % jobs == jobId:
                 jobList.append(x)
 
-    print(f'Running job {jobId} on [{platform}] with following {len(jobList)} steps:')
+    print(f"Running job {jobId} on [{platform}] with following {len(jobList)} steps:")
     for i, params in enumerate(jobList):
-        print('step', i, params)
+        print("step", i, params)
     return jobList
+
+        # ppg = int(os.environ["SLURM_PPG"])  # custom ppg use export
+        # localId = int(os.environ["SLURM_STEPID"])  # use srun step
