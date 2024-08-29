@@ -48,7 +48,7 @@ def getJobs(
     elif platform != "shell":
         raise ValueError("Unknown platform: {}".format(platform))
     if pid is None:
-        raise ValueError("jobId is required for platform: {}".format(platform))
+        raise ValueError("pid is required for platform: {}".format(platform))
     total_proc = num_task * num_proc
 
     alloc_jobs = []
